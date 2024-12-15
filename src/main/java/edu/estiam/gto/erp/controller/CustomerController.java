@@ -6,6 +6,7 @@ import edu.estiam.gto.erp.repository.CustomerRepository;
 import edu.estiam.gto.erp.view.CustomerView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +30,7 @@ public class CustomerController {
 
     @GetMapping("/{id}")
     @JsonView({ CustomerView.class })
-    public ResponseEntity<Customer> getCustomerById(Long id) {
+    public ResponseEntity<Customer> getCustomerById(@PathVariable Long id) {
         return customerRepository.findById(id)
                 .map(customer -> ResponseEntity.ok(customer))
                 .orElseGet(() -> ResponseEntity.notFound().build());

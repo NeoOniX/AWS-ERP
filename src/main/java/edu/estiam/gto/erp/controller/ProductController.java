@@ -6,6 +6,7 @@ import edu.estiam.gto.erp.repository.ProductRepository;
 import edu.estiam.gto.erp.view.ProductView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +30,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     @JsonView({ ProductView.class })
-    public ResponseEntity<Product> getProductById(Long id) {
+    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
         return productRepository.findById(id)
                 .map(product -> ResponseEntity.ok().body(product))
                 .orElseGet(() -> ResponseEntity.notFound().build());
