@@ -10,24 +10,27 @@ Parameters:
     Description: Nom de la paire de clés pour accéder à l'instance EC2
 
 Resources:
-  VPCBackGT:
+  VPCGT:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16
       EnableDnsSupport: true
       EnableDnsHostnames: true
 
-  SubnetBackGT:
+  SubnetGT:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref VPCBackGT
+      VpcId: !Ref VPCGT
       CidrBlock: 10.0.1.0/24
       MapPublicIpOnLaunch: true
 #z
-  EC2BackGT:
+  EC2GT:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
       ImageId: ami-0e54671bdf3c8ed8d
-      SubnetId: !Ref SubnetBackGT
+      SubnetId: !Ref SubnetGT
+      Tags:
+        - Key: Name
+          Value: EC2GT
