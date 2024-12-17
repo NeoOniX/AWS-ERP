@@ -10,6 +10,22 @@ Parameters:
     Description: Nom de la paire de clés pour accéder à l'instance EC2
 
 Resources:
+  SecurityGroupGT:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Autorise SSH et HTTP
+      VpcId: !Ref VPCGT
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0  # Autorise SSH depuis toutes les IP (à restreindre pour la sécurité)
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0  # Autorise HTTP
+
+
   VPCGT:
     Type: AWS::EC2::VPC
     Properties:
@@ -31,6 +47,8 @@ Resources:
       KeyName: !Ref KeyName
       ImageId: ami-0e54671bdf3c8ed8d
       SubnetId: !Ref SubnetGT
+      SecurityGroupIds:
+        - !Ref SecurityGroupGT
       Tags:
         - Key: Name
           Value: EC2GT
