@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    Description: Type d'instance EC2
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: CleTo
+    Description: Nom de la paire de clés pour accéder à l'instance EC2
+
+Resources:
+  VPCBackGT:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+
+  SubnetBackGT:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+
+  EC2BackGT:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref KeyName
+      ImageId: ami-0e54671bdf3c8ed8d
+      SubnetId: !Ref MySubnet
