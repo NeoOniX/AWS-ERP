@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: '2010-09-09'
 Parameters:
   InstanceType:
     Type: String
-    Default: t2.micro
+    Default: t2.medium
     Description: Type d'instance EC2
   KeyName:
     Type: AWS::EC2::KeyPair::KeyName
@@ -80,3 +80,4 @@ Resources:
 
           git clone https://github.com/NeoOniX/AWS-ERP-Front.git /home/ec2-user/erp-nextjs-app
           cd /home/ec2-user/erp-nextjs-app
+          
