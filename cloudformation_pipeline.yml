@@ -23,7 +23,7 @@ Resources:
       VpcId: !Ref MyVPC
       CidrBlock: 10.0.1.0/24
       MapPublicIpOnLaunch: true
-
+#z
   EC2BackGT:
     Type: AWS::EC2::Instance
     Properties:
