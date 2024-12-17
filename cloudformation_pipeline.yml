@@ -39,7 +39,7 @@ Resources:
     Properties:
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
-      ImageId: ami-0e54671bdf3c8ed8d  # À adapter selon votre région
+      ImageId: ami-0e54671bdf3c8ed8d  
       SecurityGroupIds:
         - !Ref SecurityGroupGT
       Tags:
@@ -48,7 +48,47 @@ Resources:
       UserData:
         Fn::Base64: !Sub |
           #!/bin/bash
-          yum update -y
-          yum install -y httpd
-          service httpd start
-          chkconfig httpd on
+
+          sudo yum update -y
+
+          sudo amazon-linux-extras enable mariadb10.5
+          sudo yum install mariadb-server -y
+          sudo systemctl start mariadb
+          sudo systemctl enable mariadb
+
+          mysql -u root <<EOF
+          CREATE DATABASE erp;
+          CREATE USER 'erp_user'@'localhost' IDENTIFIED BY 'erp_pass';
+          GRANT ALL PRIVILEGES ON erp.* TO 'erp_user'@'localhost';
+          FLUSH PRIVILEGES;
+          EOF
+
+          sudo yum install git -y
+
+          sudo yum install java-21-openjdk maven -y
+
+          git clone https://github.com/NeoOniX/AWS-ERP.git /home/ec2-user/erp-java-app
+          cd /home/ec2-user/erp-java-app
+          mvn clean install
+          mvn package
+          java -jar target/erp-0.0.1.jar &
+
+          curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -
+          sudo yum install nodejs -y
+          sudo npm install -g pm2
+
+          git clone https://github.com/NeoOniX/AWS-ERP-Front.git /home/ec2-user/erp-nextjs-app
+          cd /home/ec2-user/erp-nextjs-app
+          npm install
+          npm run build
+          pm2 start "npm run start" --name "ERP-Front" --watch
+          pm2 save
+
+          sudo yum install firewalld -y
+          sudo systemctl start firewalld
+          sudo systemctl enable firewalld
+          sudo firewall-cmd --add-port=22/tcp --permanent
+          sudo firewall-cmd --add-port=3306/tcp --permanent
+          sudo firewall-cmd --add-port=8080/tcp --permanent
+          sudo firewall-cmd --add-port=3000/tcp --permanent
+          sudo firewall-cmd --reload
