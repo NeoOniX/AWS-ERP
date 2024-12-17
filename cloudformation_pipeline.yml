@@ -65,7 +65,10 @@ Resources:
 
           sudo yum install git -y
 
-          sudo yum install java-21-openjdk maven -y
+          sudo amazon-linux-extras enable corretto
+          sudo yum install java-21-amazon-corretto -y
+          
+          sudo yum install maven -y
 
           git clone https://github.com/NeoOniX/AWS-ERP.git /home/ec2-user/erp-java-app
           cd /home/ec2-user/erp-java-app
