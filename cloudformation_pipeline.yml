@@ -10,6 +10,7 @@ Parameters:
     Description: Nom de la paire de clés pour accéder à l'instance EC2
 
 Resources:
+  # Security Group pour SSH et HTTP
   SecurityGroupGT:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -19,13 +20,13 @@ Resources:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 0.0.0.0/0  # Autorise SSH depuis toutes les IP (à restreindre pour la sécurité)
+          CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: 0.0.0.0/0  # Autorise HTTP
+          CidrIp: 0.0.0.0/0
 
-
+  # VPC
   VPCGT:
     Type: AWS::EC2::VPC
     Properties:
@@ -33,19 +34,54 @@ Resources:
       EnableDnsSupport: true
       EnableDnsHostnames: true
 
+  # Internet Gateway
+  InternetGatewayGT:
+    Type: AWS::EC2::InternetGateway
+
+  # Attache Internet Gateway au VPC
+  GatewayAttachmentGT:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPCGT
+      InternetGatewayId: !Ref InternetGatewayGT
+
+  # Sous-réseau
   SubnetGT:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPCGT
       CidrBlock: 10.0.1.0/24
       MapPublicIpOnLaunch: true
+      AvailabilityZone: us-east-1a
 
+  # Table de routage pour le sous-réseau
+  RouteTableGT:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPCGT
+
+  # Route vers la passerelle Internet
+  RouteGT:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref RouteTableGT
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGatewayGT
+
+  # Association de la table de routage au sous-réseau
+  SubnetRouteTableAssociationGT:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetGT
+      RouteTableId: !Ref RouteTableGT
+
+  # Instance EC2
   EC2GT:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
-      ImageId: ami-0e54671bdf3c8ed8d
+      ImageId: ami-0e54671bdf3c8ed8d  # À adapter selon votre région
       SubnetId: !Ref SubnetGT
       SecurityGroupIds:
         - !Ref SecurityGroupGT
@@ -56,11 +92,6 @@ Resources:
         Fn::Base64: !Sub |
           #!/bin/bash
           yum update -y
-          service -httpd start
+          yum install -y httpd
+          service httpd start
           chkconfig httpd on
-
-
-
-
-
-  
