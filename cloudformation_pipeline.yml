@@ -15,65 +15,23 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Autorise SSH et HTTP
-      VpcId: !Ref VPCGT
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
+          FromPort: 5432
+          ToPort: 5432
           CidrIp: 0.0.0.0/0
-
-  # VPC
-  VPCGT:
-    Type: AWS::EC2::VPC
-    Properties:
-      CidrBlock: 10.0.0.0/16
-      EnableDnsSupport: true
-      EnableDnsHostnames: true
-
-  # Internet Gateway
-  InternetGatewayGT:
-    Type: AWS::EC2::InternetGateway
-
-  # Attache Internet Gateway au VPC
-  GatewayAttachmentGT:
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      VpcId: !Ref VPCGT
-      InternetGatewayId: !Ref InternetGatewayGT
-
-  # Sous-réseau
-  SubnetGT:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref VPCGT
-      CidrBlock: 10.0.1.0/24
-      MapPublicIpOnLaunch: true
-      AvailabilityZone: us-east-1a
-
-  # Table de routage pour le sous-réseau
-  RouteTableGT:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPCGT
-
-  # Route vers la passerelle Internet
-  RouteGT:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref RouteTableGT
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref InternetGatewayGT
-
-  # Association de la table de routage au sous-réseau
-  SubnetRouteTableAssociationGT:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref SubnetGT
-      RouteTableId: !Ref RouteTableGT
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 3000
+          ToPort: 3000
+          CidrIp: 0.0.0.0/0
 
   # Instance EC2
   EC2GT:
@@ -82,7 +40,6 @@ Resources:
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
       ImageId: ami-0e54671bdf3c8ed8d  # À adapter selon votre région
-      SubnetId: !Ref SubnetGT
       SecurityGroupIds:
         - !Ref SecurityGroupGT
       Tags:
