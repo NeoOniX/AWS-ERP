@@ -23,7 +23,7 @@ Resources:
       VpcId: !Ref VPCGT
       CidrBlock: 10.0.1.0/24
       MapPublicIpOnLaunch: true
-#z
+
   EC2GT:
     Type: AWS::EC2::Instance
     Properties:
@@ -34,3 +34,15 @@ Resources:
       Tags:
         - Key: Name
           Value: EC2GT
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          yum update -y
+          service -httpd start
+          chkconfig httpd on
+
+
+
+
+
+  
