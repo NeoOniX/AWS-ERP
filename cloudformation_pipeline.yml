@@ -20,7 +20,7 @@ Resources:
   SubnetBackGT:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref MyVPC
+      VpcId: !Ref VPCBackGT
       CidrBlock: 10.0.1.0/24
       MapPublicIpOnLaunch: true
 #z
@@ -30,4 +30,4 @@ Resources:
       InstanceType: !Ref InstanceType
       KeyName: !Ref KeyName
       ImageId: ami-0e54671bdf3c8ed8d
-      SubnetId: !Ref MySubnet
+      SubnetId: !Ref SubnetBackGT
