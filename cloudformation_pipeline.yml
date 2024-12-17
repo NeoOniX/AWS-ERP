@@ -51,8 +51,7 @@ Resources:
 
           sudo yum update -y
 
-          sudo amazon-linux-extras enable mariadb10.5
-          sudo yum install mariadb-server -y
+          sudo dnf install mariadb105-server -y
           sudo systemctl start mariadb
           sudo systemctl enable mariadb
 
