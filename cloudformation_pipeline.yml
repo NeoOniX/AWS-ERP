@@ -33,7 +33,7 @@ Resources:
           ToPort: 3000
           CidrIp: 0.0.0.0/0
 
-  # Instance EC2
+  # Instance EC
   EC2GT:
     Type: AWS::EC2::Instance
     Properties:
